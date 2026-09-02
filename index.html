@@ -1,0 +1,532 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CyberLab | Learn • Build • Secure</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header>
+    <div class="logo">&lt;Cyber<span>Lab</span>/&gt;</div>
+    <button class="menu-btn" onclick="toggleMenu()" aria-label="Open menu">
+        ☰
+    </button>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#courses">Courses</a>
+        <a href="#about">About</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#contact">Contact</a>
+    </nav>
+
+    <button class="login-btn" onclick="openLogin()">
+        Login
+    </button>
+</header>
+
+
+<!-- HERO -->
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <p class="terminal-text">&gt; SYSTEM ONLINE_</p>
+
+        <h1>
+            Learn Cybersecurity.<br>
+            <span>Build Your Skills.</span>
+        </h1>
+
+        <p>
+            Welcome to CyberLab — a learning platform for
+            cybersecurity, ethical hacking, Linux, networking
+            and secure development.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="#courses" class="btn primary">
+                Explore Courses
+            </a>
+
+            <a href="#dashboard" class="btn secondary">
+                My Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="terminal">
+
+        <div class="terminal-header">
+            <span>●</span>
+            <span>●</span>
+            <span>●</span>
+        </div>
+
+        <div class="terminal-body">
+
+            <p>$ whoami</p>
+            <p class="green">CyberLab Student</p>
+
+            <p>$ learning</p>
+            <p class="green">Cybersecurity</p>
+            <p class="green">Networking</p>
+            <p class="green">Linux</p>
+            <p class="green">Ethical Hacking</p>
+
+            <p>$ status</p>
+            <p class="green">[ ONLINE ]</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FEATURES -->
+<section class="features">
+
+    <div class="feature">
+        <div>📚</div>
+        <h3>Learn</h3>
+        <p>Structured cybersecurity courses.</p>
+    </div>
+
+    <div class="feature">
+        <div>🧪</div>
+        <h3>Practice</h3>
+        <p>Test your knowledge with quizzes.</p>
+    </div>
+
+    <div class="feature">
+        <div>📊</div>
+        <h3>Track</h3>
+        <p>Monitor your learning progress.</p>
+    </div>
+
+    <div class="feature">
+        <div>🏆</div>
+        <h3>Achieve</h3>
+        <p>Earn certificates as you progress.</p>
+    </div>
+
+</section>
+
+
+<!-- COURSES -->
+<section id="courses">
+
+    <div class="section-title">
+        <p class="section-tag">&gt; COURSES</p>
+        <h2>Start Your <span>Learning Journey</span></h2>
+        <p>Choose a course and begin building your cybersecurity skills.</p>
+    </div>
+
+
+    <div class="course-grid">
+
+        <div class="course-card">
+
+            <div class="course-icon">🛡️</div>
+
+            <h3>Cybersecurity Fundamentals</h3>
+
+            <p>
+                Learn security principles, threats,
+                vulnerabilities and defensive concepts.
+            </p>
+
+            <div class="course-info">
+                <span>Beginner</span>
+                <span>8 Lessons</span>
+            </div>
+
+            <button onclick="startCourse('Cybersecurity Fundamentals')">
+                Start Course
+            </button>
+
+        </div>
+
+
+        <div class="course-card">
+
+            <div class="course-icon">🐧</div>
+
+            <h3>Linux & Termux</h3>
+
+            <p>
+                Learn Linux commands, files, permissions,
+                processes and terminal fundamentals.
+            </p>
+
+            <div class="course-info">
+                <span>Beginner</span>
+                <span>10 Lessons</span>
+            </div>
+
+            <button onclick="startCourse('Linux & Termux')">
+                Start Course
+            </button>
+
+        </div>
+
+
+        <div class="course-card">
+
+            <div class="course-icon">🌐</div>
+
+            <h3>Networking Fundamentals</h3>
+
+            <p>
+                Understand IP addresses, TCP/IP,
+                DNS, HTTP and network architecture.
+            </p>
+
+            <div class="course-info">
+                <span>Beginner</span>
+                <span>9 Lessons</span>
+            </div>
+
+            <button onclick="startCourse('Networking Fundamentals')">
+                Start Course
+            </button>
+
+        </div>
+
+
+        <div class="course-card">
+
+            <div class="course-icon">🔐</div>
+
+            <h3>Ethical Hacking</h3>
+
+            <p>
+                Learn ethical security testing concepts
+                through authorized lab environments.
+            </p>
+
+            <div class="course-info">
+                <span>Intermediate</span>
+                <span>12 Lessons</span>
+            </div>
+
+            <button onclick="startCourse('Ethical Hacking')">
+                Start Course
+            </button>
+
+        </div>
+
+
+        <div class="course-card">
+
+            <div class="course-icon">🔎</div>
+
+            <h3>Wireshark & Traffic Analysis</h3>
+
+            <p>
+                Learn how to inspect and understand
+                network packets in controlled environments.
+            </p>
+
+            <div class="course-info">
+                <span>Intermediate</span>
+                <span>7 Lessons</span>
+            </div>
+
+            <button onclick="startCourse('Wireshark & Traffic Analysis')">
+                Start Course
+            </button>
+
+        </div>
+
+
+        <div class="course-card">
+
+            <div class="course-icon">💻</div>
+
+            <h3>Secure Web Development</h3>
+
+            <p>
+                Learn secure coding concepts,
+                authentication and input validation.
+            </p>
+
+            <div class="course-info">
+                <span>Intermediate</span>
+                <span>10 Lessons</span>
+            </div>
+
+            <button onclick="startCourse('Secure Web Development')">
+                Start Course
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+<section id="about">
+
+    <div class="section-title">
+
+        <p class="section-tag">&gt; ABOUT CYBERLAB</p>
+
+        <h2>Learn. <span>Build. Secure.</span></h2>
+
+    </div>
+
+    <div class="about-content">
+
+        <div>
+            <p>
+                CyberLab is an educational cybersecurity platform
+                created to help students understand security
+                concepts through structured learning and practice.
+            </p>
+
+            <p>
+                The platform focuses on practical learning while
+                encouraging responsible and authorized security
+                testing.
+            </p>
+        </div>
+
+        <div class="about-box">
+
+            <h3>Our Mission</h3>
+
+            <p>
+                Make cybersecurity education accessible,
+                practical and engaging for beginners.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+
+    <div class="section-title">
+
+        <p class="section-tag">&gt; STUDENT DASHBOARD</p>
+
+        <h2>Your Learning <span>Progress</span></h2>
+
+    </div>
+
+
+    <div class="dashboard">
+
+        <div class="profile">
+
+            <div class="avatar">
+                KT
+            </div>
+
+            <h3>Krishna Thakur</h3>
+
+            <p>CyberLab Student</p>
+
+        </div>
+
+
+        <div class="progress-area">
+
+            <h3>Overall Progress</h3>
+
+            <div class="progress-bar">
+                <div id="progress"></div>
+            </div>
+
+            <p>
+                <span id="progressText">0%</span>
+                course completion
+            </p>
+
+        </div>
+
+
+        <div class="dashboard-stats">
+
+            <div>
+                <strong id="coursesCompleted">0</strong>
+                <span>Courses</span>
+            </div>
+
+            <div>
+                <strong id="quizScore">0</strong>
+                <span>Quiz Score</span>
+            </div>
+
+            <div>
+                <strong id="certificates">0</strong>
+                <span>Certificates</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- QUIZ -->
+<section id="quiz">
+
+    <div class="section-title">
+
+        <p class="section-tag">&gt; KNOWLEDGE CHECK</p>
+
+        <h2>Cybersecurity <span>Quiz</span></h2>
+
+    </div>
+
+
+    <div class="quiz-box">
+
+        <h3 id="question">
+            What does CIA stand for in cybersecurity?
+        </h3>
+
+        <div class="answers">
+
+            <button onclick="checkAnswer(this, false)">
+                Central Intelligence Agency
+            </button>
+
+            <button onclick="checkAnswer(this, true)">
+                Confidentiality, Integrity and Availability
+            </button>
+
+            <button onclick="checkAnswer(this, false)">
+                Computer Internet Access
+            </button>
+
+            <button onclick="checkAnswer(this, false)">
+                Cyber Information Architecture
+            </button>
+
+        </div>
+
+        <p id="quizResult"></p>
+
+    </div>
+
+</section>
+
+
+<!-- CONTACT -->
+<section id="contact">
+
+    <div class="section-title">
+
+        <p class="section-tag">&gt; CONTACT</p>
+
+        <h2>Contact <span>CyberLab</span></h2>
+
+    </div>
+
+    <div class="contact-box">
+
+        <input
+            type="text"
+            placeholder="Your Name"
+        >
+
+        <input
+            type="email"
+            placeholder="Your Email"
+        >
+
+        <textarea
+            placeholder="Your Message"
+        ></textarea>
+
+        <button onclick="sendMessage()">
+            Send Message
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <div class="logo">
+        &lt;Cyber<span>Lab</span>/&gt;
+    </div>
+
+    <p>
+        Learn • Build • Secure 🔐
+    </p>
+
+    <p>
+        © 2026 CyberLab — Krishna Thakur
+    </p>
+
+</footer>
+
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+
+    <div class="modal-box">
+
+        <button class="close" onclick="closeLogin()">
+            ×
+        </button>
+
+        <h2>Cyber<span>Lab</span> Login</h2>
+
+        <input
+            type="email"
+            placeholder="Email"
+        >
+
+        <input
+            type="password"
+            placeholder="Password"
+        >
+
+        <button onclick="login()">
+            Login
+        </button>
+
+        <p>
+            New student?
+            <a href="#" onclick="register()">
+                Create Account
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
+```
