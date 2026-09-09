@@ -1,5 +1,5 @@
 // =========================================
-// CYBERLAB WEBSITE JAVASCRIPT + SUPABASE AUTH
+// CYBERLAB - STAGE 1: REAL SUPABASE AUTHENTICATION
 // =========================================
 
 var currentUser = null;
@@ -7,21 +7,24 @@ var currentUser = null;
 function supabaseReady() {
     return typeof supabaseClient !== 'undefined' &&
         supabaseClient !== null &&
+        typeof SUPABASE_URL !== 'undefined' &&
+        typeof SUPABASE_PUBLISHABLE_KEY !== 'undefined' &&
         SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL' &&
         SUPABASE_PUBLISHABLE_KEY !== 'YOUR_SUPABASE_PUBLISHABLE_KEY';
 }
 
+function getRedirectUrl() {
+    return window.location.origin + window.location.pathname;
+}
+
 function openLogin() {
     var modal = document.getElementById('loginModal');
-    if (modal) {
-        modal.classList.add('active');
-        var email = document.getElementById('loginEmail');
-        if (email) email.focus();
-    }
+    if (!modal) return;
 
-    if (!supabaseReady()) {
-        showAuthSetupMessage();
-    }
+    modal.classList.add('active');
+    renderLoginForm();
+
+    if (!supabaseReady()) showAuthSetupMessage();
 }
 
 function closeLogin() {
@@ -32,11 +35,12 @@ function closeLogin() {
 function showAuthSetupMessage() {
     var box = document.querySelector('#loginModal .modal-box');
     if (!box) return;
+
     var existing = box.querySelector('.auth-message');
     if (!existing) {
         var p = document.createElement('p');
         p.className = 'auth-message';
-        p.textContent = 'Authentication service is not loaded. Please check the Supabase setup and refresh the page.';
+        p.textContent = 'Authentication service is not loaded. Please refresh the page and check the Supabase setup.';
         box.insertBefore(p, box.querySelector('#loginEmail'));
     }
 }
@@ -51,10 +55,13 @@ function renderLoginForm(message) {
         ${message ? `<p class="auth-message">${escapeHtml(message)}</p>` : ''}
         <input id="loginEmail" type="email" placeholder="Email" autocomplete="email">
         <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
-        <button onclick="login()">Login</button>
+        <button id="loginSubmit" onclick="login()">Login</button>
         <p><a href="#" onclick="showForgotPassword(); return false;">Forgot password?</a></p>
         <p>New student? <a href="#" onclick="showRegister(); return false;">Create Account</a></p>
     `;
+
+    var email = document.getElementById('loginEmail');
+    if (email) email.focus();
 }
 
 function showRegister() {
@@ -68,7 +75,7 @@ function showRegister() {
         <input id="registerName" type="text" placeholder="Full Name" autocomplete="name">
         <input id="registerEmail" type="email" placeholder="Email" autocomplete="email">
         <input id="registerPassword" type="password" placeholder="Password (8+ characters)" autocomplete="new-password">
-        <button onclick="register()">Create Account</button>
+        <button id="registerSubmit" onclick="register()">Create Account</button>
         <p>Already have an account? <a href="#" onclick="renderLoginForm(); return false;">Login</a></p>
     `;
 
@@ -79,13 +86,20 @@ function showRegister() {
 
 async function register() {
     if (!supabaseReady()) {
-        alert('Supabase is not loaded. Please check the setup and refresh the page.');
+        alert('Supabase is not loaded. Please refresh the page.');
         return;
     }
 
-    var name = document.getElementById('registerName').value.trim();
-    var email = document.getElementById('registerEmail').value.trim();
-    var password = document.getElementById('registerPassword').value;
+    var nameInput = document.getElementById('registerName');
+    var emailInput = document.getElementById('registerEmail');
+    var passwordInput = document.getElementById('registerPassword');
+    var button = document.getElementById('registerSubmit');
+
+    if (!nameInput || !emailInput || !passwordInput) return;
+
+    var name = nameInput.value.trim();
+    var email = emailInput.value.trim().toLowerCase();
+    var password = passwordInput.value;
 
     if (!name || !email || !password) {
         alert('Please fill in all fields.');
@@ -97,33 +111,59 @@ async function register() {
         return;
     }
 
-    var redirectUrl = window.location.origin + window.location.pathname;
-    var result = await supabaseClient.auth.signUp({
-        email: email,
-        password: password,
-        options: { data: { full_name: name }, emailRedirectTo: redirectUrl }
-    });
-
-    if (result.error) {
-        alert(result.error.message);
-        return;
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Creating Account...';
     }
 
-    closeLogin();
-    alert('Account created! Check your email to verify your CyberLab account.');
+    try {
+        var result = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: { full_name: name },
+                emailRedirectTo: getRedirectUrl()
+            }
+        });
+
+        if (result.error) {
+            alert('Registration failed: ' + result.error.message);
+            return;
+        }
+
+        closeLogin();
+
+        if (result.data.session) {
+            currentUser = result.data.user;
+            updateLoginButton();
+            updateDashboardUser();
+            alert('Account created and you are now logged in. Welcome to CyberLab!');
+        } else {
+            alert('Account created! Please check your email and click the verification link before logging in.');
+        }
+    } catch (error) {
+        alert('Registration error: ' + (error.message || 'Please try again.'));
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Create Account';
+        }
+    }
 }
 
 async function login() {
     if (!supabaseReady()) {
-        alert('Supabase is not loaded. Please check the setup and refresh the page.');
+        alert('Supabase is not loaded. Please refresh the page.');
         return;
     }
 
     var emailInput = document.getElementById('loginEmail');
     var passwordInput = document.getElementById('loginPassword');
+    var button = document.getElementById('loginSubmit');
+
     if (!emailInput || !passwordInput) return;
 
-    var email = emailInput.value.trim();
+    var email = emailInput.value.trim().toLowerCase();
     var password = passwordInput.value;
 
     if (!email || !password) {
@@ -131,33 +171,54 @@ async function login() {
         return;
     }
 
-    var result = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
-
-    if (result.error) {
-        alert('Login failed: ' + result.error.message);
-        return;
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Logging in...';
     }
 
-    currentUser = result.data.user;
-    closeLogin();
-    updateLoginButton();
-    updateDashboardUser();
-    alert('Login successful! Welcome to CyberLab.');
+    try {
+        var result = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (result.error) {
+            alert('Login failed: ' + result.error.message);
+            return;
+        }
+
+        currentUser = result.data.user;
+        closeLogin();
+        updateLoginButton();
+        updateDashboardUser();
+        alert('Login successful! Welcome to CyberLab.');
+    } catch (error) {
+        alert('Login error: ' + (error.message || 'Please try again.'));
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Login';
+        }
+    }
 }
 
 async function logout() {
     if (!supabaseReady()) return;
-    var result = await supabaseClient.auth.signOut();
 
-    if (result.error) {
-        alert('Logout failed: ' + result.error.message);
-        return;
+    try {
+        var result = await supabaseClient.auth.signOut();
+        if (result.error) {
+            alert('Logout failed: ' + result.error.message);
+            return;
+        }
+
+        currentUser = null;
+        updateLoginButton();
+        updateDashboardUser();
+        alert('You have been logged out.');
+    } catch (error) {
+        alert('Logout error: ' + (error.message || 'Please try again.'));
     }
-
-    currentUser = null;
-    updateLoginButton();
-    updateDashboardUser();
-    alert('You have been logged out.');
 }
 
 async function showForgotPassword() {
@@ -169,38 +230,113 @@ async function showForgotPassword() {
         <h2>Reset <span>Password</span></h2>
         <p>Enter your email and we will send you a password reset link.</p>
         <input id="resetEmail" type="email" placeholder="Email" autocomplete="email">
-        <button onclick="sendPasswordReset()">Send Reset Link</button>
+        <button id="resetSubmit" onclick="sendPasswordReset()">Send Reset Link</button>
         <p><a href="#" onclick="renderLoginForm(); return false;">Back to Login</a></p>
     `;
 
     var modal = document.getElementById('loginModal');
     if (modal) modal.classList.add('active');
+
     var email = document.getElementById('resetEmail');
     if (email) email.focus();
 }
 
 async function sendPasswordReset() {
     if (!supabaseReady()) {
-        alert('Supabase is not loaded. Please check the setup and refresh the page.');
+        alert('Supabase is not loaded. Please refresh the page.');
         return;
     }
 
-    var email = document.getElementById('resetEmail').value.trim();
+    var input = document.getElementById('resetEmail');
+    var button = document.getElementById('resetSubmit');
+    if (!input) return;
+
+    var email = input.value.trim().toLowerCase();
     if (!email) {
         alert('Please enter your email.');
         return;
     }
 
-    var redirectUrl = window.location.origin + window.location.pathname;
-    var result = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Sending...';
+    }
 
-    if (result.error) {
-        alert('Could not send reset email: ' + result.error.message);
+    try {
+        var result = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: getRedirectUrl()
+        });
+
+        if (result.error) {
+            alert('Could not send reset email: ' + result.error.message);
+            return;
+        }
+
+        closeLogin();
+        alert('Password reset email sent. Check your inbox.');
+    } catch (error) {
+        alert('Reset error: ' + (error.message || 'Please try again.'));
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Send Reset Link';
+        }
+    }
+}
+
+function showResetPasswordForm() {
+    var box = document.querySelector('#loginModal .modal-box');
+    if (!box) return;
+
+    box.innerHTML = `
+        <button class="close" onclick="closeLogin()" aria-label="Close">×</button>
+        <h2>Choose a New <span>Password</span></h2>
+        <input id="newPassword" type="password" placeholder="New password (8+ characters)" autocomplete="new-password">
+        <button id="updatePasswordSubmit" onclick="updatePassword()">Update Password</button>
+    `;
+
+    var modal = document.getElementById('loginModal');
+    if (modal) modal.classList.add('active');
+
+    var password = document.getElementById('newPassword');
+    if (password) password.focus();
+}
+
+async function updatePassword() {
+    if (!supabaseReady()) return;
+
+    var input = document.getElementById('newPassword');
+    var button = document.getElementById('updatePasswordSubmit');
+    if (!input) return;
+
+    var password = input.value;
+    if (!password || password.length < 8) {
+        alert('Password must be at least 8 characters long.');
         return;
     }
 
-    closeLogin();
-    alert('Password reset email sent. Check your inbox.');
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Updating...';
+    }
+
+    try {
+        var result = await supabaseClient.auth.updateUser({ password: password });
+        if (result.error) {
+            alert('Could not update password: ' + result.error.message);
+            return;
+        }
+
+        closeLogin();
+        alert('Password updated successfully.');
+    } catch (error) {
+        alert('Password update error: ' + (error.message || 'Please try again.'));
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Update Password';
+        }
+    }
 }
 
 function updateLoginButton() {
@@ -231,39 +367,6 @@ function updateDashboardUser() {
         nameElement.textContent = 'Guest Student';
         roleElement.textContent = 'Login to track your progress';
     }
-}
-
-function showResetPasswordForm() {
-    var box = document.querySelector('#loginModal .modal-box');
-    if (!box) return;
-
-    box.innerHTML = `
-        <button class="close" onclick="closeLogin()" aria-label="Close">×</button>
-        <h2>Choose a New <span>Password</span></h2>
-        <input id="newPassword" type="password" placeholder="New password (8+ characters)" autocomplete="new-password">
-        <button onclick="updatePassword()">Update Password</button>
-    `;
-
-    var modal = document.getElementById('loginModal');
-    if (modal) modal.classList.add('active');
-}
-
-async function updatePassword() {
-    if (!supabaseReady()) return;
-    var password = document.getElementById('newPassword').value;
-    if (!password || password.length < 8) {
-        alert('Password must be at least 8 characters long.');
-        return;
-    }
-
-    var result = await supabaseClient.auth.updateUser({ password: password });
-    if (result.error) {
-        alert('Could not update password: ' + result.error.message);
-        return;
-    }
-
-    closeLogin();
-    alert('Password updated successfully.');
 }
 
 function startCourse(courseName) {
@@ -326,13 +429,14 @@ window.addEventListener('click', function(event) {
 
 window.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') closeLogin();
+
     if (event.key === 'Enter') {
         var modal = document.getElementById('loginModal');
         var active = document.activeElement;
-        if (modal && modal.classList.contains('active') && active) {
-            if (active.id === 'loginEmail' || active.id === 'loginPassword') login();
-            if (active.id === 'registerName' || active.id === 'registerEmail' || active.id === 'registerPassword') register();
-        }
+        if (!modal || !modal.classList.contains('active') || !active) return;
+
+        if (active.id === 'loginEmail' || active.id === 'loginPassword') login();
+        if (active.id === 'registerName' || active.id === 'registerEmail' || active.id === 'registerPassword') register();
     }
 });
 
@@ -342,15 +446,23 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     if (!supabaseReady()) return;
 
-    var sessionResult = await supabaseClient.auth.getSession();
-    currentUser = sessionResult.data.session ? sessionResult.data.session.user : null;
-    updateLoginButton();
-    updateDashboardUser();
+    try {
+        var sessionResult = await supabaseClient.auth.getSession();
+        currentUser = sessionResult.data && sessionResult.data.session
+            ? sessionResult.data.session.user
+            : null;
 
-    supabaseClient.auth.onAuthStateChange(function(event, session) {
-        currentUser = session ? session.user : null;
         updateLoginButton();
         updateDashboardUser();
-        if (event === 'PASSWORD_RECOVERY') showResetPasswordForm();
-    });
+
+        supabaseClient.auth.onAuthStateChange(function(event, session) {
+            currentUser = session ? session.user : null;
+            updateLoginButton();
+            updateDashboardUser();
+
+            if (event === 'PASSWORD_RECOVERY') showResetPasswordForm();
+        });
+    } catch (error) {
+        console.error('Supabase session error:', error);
+    }
 });
