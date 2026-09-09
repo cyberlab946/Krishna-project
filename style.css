@@ -630,20 +630,33 @@ footer .logo {
     color: #00ff9d;
 }
 
-.close {
+.modal-box .close {
     position: absolute;
-
-    right: 15px;
     top: 10px;
+    right: 10px;
 
-    background: none;
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
     border: none;
 
     color: white;
-
-    font-size: 25px;
+    font-size: 28px;
+    line-height: 1;
 
     cursor: pointer;
+}
+
+.modal-box .close:hover {
+    color: #00ff9d;
 }
 
 
