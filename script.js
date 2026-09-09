@@ -6,28 +6,39 @@ var currentUser = null;
 
 function supabaseReady() {
     return typeof supabaseClient !== 'undefined' &&
+        supabaseClient !== null &&
         SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL' &&
         SUPABASE_PUBLISHABLE_KEY !== 'YOUR_SUPABASE_PUBLISHABLE_KEY';
 }
 
 function openLogin() {
-    if (!supabaseReady()) {
-        alert('Supabase is not configured yet. Open supabase-config.js and add your Supabase Project URL and Publishable Key.');
-        return;
-    }
-
-    renderLoginForm();
     var modal = document.getElementById('loginModal');
     if (modal) {
         modal.classList.add('active');
         var email = document.getElementById('loginEmail');
         if (email) email.focus();
     }
+
+    if (!supabaseReady()) {
+        showAuthSetupMessage();
+    }
 }
 
 function closeLogin() {
     var modal = document.getElementById('loginModal');
     if (modal) modal.classList.remove('active');
+}
+
+function showAuthSetupMessage() {
+    var box = document.querySelector('#loginModal .modal-box');
+    if (!box) return;
+    var existing = box.querySelector('.auth-message');
+    if (!existing) {
+        var p = document.createElement('p');
+        p.className = 'auth-message';
+        p.textContent = 'Authentication service is not loaded. Please check the Supabase setup and refresh the page.';
+        box.insertBefore(p, box.querySelector('#loginEmail'));
+    }
 }
 
 function renderLoginForm(message) {
@@ -68,7 +79,7 @@ function showRegister() {
 
 async function register() {
     if (!supabaseReady()) {
-        alert('Supabase is not configured yet.');
+        alert('Supabase is not loaded. Please check the setup and refresh the page.');
         return;
     }
 
@@ -87,14 +98,10 @@ async function register() {
     }
 
     var redirectUrl = window.location.origin + window.location.pathname;
-
     var result = await supabaseClient.auth.signUp({
         email: email,
         password: password,
-        options: {
-            data: { full_name: name },
-            emailRedirectTo: redirectUrl
-        }
+        options: { data: { full_name: name }, emailRedirectTo: redirectUrl }
     });
 
     if (result.error) {
@@ -108,13 +115,12 @@ async function register() {
 
 async function login() {
     if (!supabaseReady()) {
-        alert('Supabase is not configured yet.');
+        alert('Supabase is not loaded. Please check the setup and refresh the page.');
         return;
     }
 
     var emailInput = document.getElementById('loginEmail');
     var passwordInput = document.getElementById('loginPassword');
-
     if (!emailInput || !passwordInput) return;
 
     var email = emailInput.value.trim();
@@ -125,10 +131,7 @@ async function login() {
         return;
     }
 
-    var result = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+    var result = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
 
     if (result.error) {
         alert('Login failed: ' + result.error.message);
@@ -143,6 +146,7 @@ async function login() {
 }
 
 async function logout() {
+    if (!supabaseReady()) return;
     var result = await supabaseClient.auth.signOut();
 
     if (result.error) {
@@ -176,17 +180,19 @@ async function showForgotPassword() {
 }
 
 async function sendPasswordReset() {
-    var email = document.getElementById('resetEmail').value.trim();
+    if (!supabaseReady()) {
+        alert('Supabase is not loaded. Please check the setup and refresh the page.');
+        return;
+    }
 
+    var email = document.getElementById('resetEmail').value.trim();
     if (!email) {
         alert('Please enter your email.');
         return;
     }
 
     var redirectUrl = window.location.origin + window.location.pathname;
-    var result = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl
-    });
+    var result = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
 
     if (result.error) {
         alert('Could not send reset email: ' + result.error.message);
@@ -215,7 +221,6 @@ function updateLoginButton() {
 function updateDashboardUser() {
     var nameElement = document.querySelector('.profile h3');
     var roleElement = document.querySelector('.profile p');
-
     if (!nameElement || !roleElement) return;
 
     if (currentUser) {
@@ -244,15 +249,14 @@ function showResetPasswordForm() {
 }
 
 async function updatePassword() {
+    if (!supabaseReady()) return;
     var password = document.getElementById('newPassword').value;
-
     if (!password || password.length < 8) {
         alert('Password must be at least 8 characters long.');
         return;
     }
 
     var result = await supabaseClient.auth.updateUser({ password: password });
-
     if (result.error) {
         alert('Could not update password: ' + result.error.message);
         return;
@@ -268,14 +272,12 @@ function startCourse(courseName) {
         alert('Please create an account or log in before starting a course.');
         return;
     }
-
     alert('Starting: ' + courseName + '\n\nCourse opened successfully!');
 }
 
 function checkAnswer(button, correct) {
     var result = document.getElementById('quizResult');
     var buttons = document.querySelectorAll('.answers button');
-
     for (var i = 0; i < buttons.length; i++) buttons[i].disabled = true;
 
     if (correct) {
@@ -289,7 +291,6 @@ function checkAnswer(button, correct) {
 
 function sendMessage(event) {
     event.preventDefault();
-
     var name = document.getElementById('contactName').value.trim();
     var email = document.getElementById('contactEmail').value.trim();
     var message = document.getElementById('contactMessage').value.trim();
@@ -301,18 +302,13 @@ function sendMessage(event) {
 
     var subject = encodeURIComponent('CyberLab Contact from ' + name);
     var body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
-
-    window.open(
-        'https://mail.google.com/mail/?view=cm&fs=1&to=cyberlabkrishna%40gmail.com&su=' + subject + '&body=' + body,
-        '_blank'
-    );
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=cyberlabkrishna%40gmail.com&su=' + subject + '&body=' + body, '_blank');
 }
 
 function toggleMenu() {
     var nav = document.getElementById('mainNav');
     var button = document.querySelector('.menu-btn');
     if (!nav) return;
-
     nav.classList.toggle('active');
     if (button) button.setAttribute('aria-expanded', nav.classList.contains('active') ? 'true' : 'false');
 }
@@ -330,7 +326,6 @@ window.addEventListener('click', function(event) {
 
 window.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') closeLogin();
-
     if (event.key === 'Enter') {
         var modal = document.getElementById('loginModal');
         var active = document.activeElement;
@@ -342,11 +337,10 @@ window.addEventListener('keydown', function(event) {
 });
 
 document.addEventListener('DOMContentLoaded', async function() {
-    if (!supabaseReady()) {
-        updateLoginButton();
-        updateDashboardUser();
-        return;
-    }
+    updateLoginButton();
+    updateDashboardUser();
+
+    if (!supabaseReady()) return;
 
     var sessionResult = await supabaseClient.auth.getSession();
     currentUser = sessionResult.data.session ? sessionResult.data.session.user : null;
@@ -357,9 +351,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         currentUser = session ? session.user : null;
         updateLoginButton();
         updateDashboardUser();
-
-        if (event === 'PASSWORD_RECOVERY') {
-            showResetPasswordForm();
-        }
+        if (event === 'PASSWORD_RECOVERY') showResetPasswordForm();
     });
 });
