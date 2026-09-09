@@ -98,11 +98,17 @@ create policy "Users can read own enrollments" on public.enrollments for select 
 drop policy if exists "Users can create own enrollments" on public.enrollments;
 create policy "Users can create own enrollments" on public.enrollments for insert with check (auth.uid() = user_id);
 
+drop policy if exists "Users can update own enrollments" on public.enrollments;
+create policy "Users can update own enrollments" on public.enrollments for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 drop policy if exists "Users can read own lesson progress" on public.lesson_progress;
 create policy "Users can read own lesson progress" on public.lesson_progress for select using (auth.uid() = user_id);
 
 drop policy if exists "Users can create own lesson progress" on public.lesson_progress;
 create policy "Users can create own lesson progress" on public.lesson_progress for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Users can update own lesson progress" on public.lesson_progress;
+create policy "Users can update own lesson progress" on public.lesson_progress for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 drop policy if exists "Users can delete own lesson progress" on public.lesson_progress;
 create policy "Users can delete own lesson progress" on public.lesson_progress for delete using (auth.uid() = user_id);
