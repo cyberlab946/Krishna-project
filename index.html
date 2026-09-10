@@ -8,6 +8,27 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="stage2.css?v=3">
     <link rel="stylesheet" href="mobile-menu-fix.css?v=1">
+    <style>
+      #courses .learning-dashboard{max-width:1200px;margin:auto;padding:24px}
+      #courses .learning-hero{padding:28px;text-align:center;border:1px solid rgba(0,255,150,.22);border-radius:18px;background:rgba(10,20,25,.72);margin-bottom:30px}
+      #courses .learning-hero h2{margin:0 0 8px}
+      #courses .learning-hero p{margin:0;opacity:.8}
+      #courses .course-category{margin:30px 0}
+      #courses .course-category h3{font-size:1.25rem;margin:0 0 15px}
+      #courses .dashboard-course-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+      #courses .dashboard-course{padding:20px;border:1px solid rgba(0,255,150,.18);border-radius:16px;background:rgba(12,20,28,.8);display:flex;flex-direction:column;min-height:180px;transition:.2s}
+      #courses .dashboard-course:hover{transform:translateY(-4px);border-color:rgba(0,255,150,.55)}
+      #courses .dashboard-course .course-icon{font-size:2rem}
+      #courses .dashboard-course h4{margin:10px 0 7px}
+      #courses .dashboard-course p{font-size:.9rem;opacity:.78;flex:1;margin:0 0 14px}
+      #courses .dashboard-course button{width:100%}
+      #courses .learning-progress{padding:22px;border:1px solid rgba(0,255,150,.18);border-radius:16px;background:rgba(12,20,28,.8)}
+      #courses .learning-progress-bar{height:12px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin:12px 0}
+      #courses .learning-progress-fill{height:100%;width:0;background:currentColor;border-radius:99px;transition:width .3s}
+      @media(max-width:950px){#courses .dashboard-course-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+      @media(max-width:700px){#courses .dashboard-course-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+      @media(max-width:480px){#courses .learning-dashboard{padding:12px}#courses .dashboard-course-grid{grid-template-columns:1fr}}
+    </style>
 </head>
 <body>
 <header>
@@ -18,7 +39,42 @@
 </header>
 <section class="hero" id="home"><div class="hero-content"><p class="terminal-text">&gt; SYSTEM ONLINE_</p><h1>Learn Cybersecurity.<br><span>Build Your Skills.</span></h1><p>Welcome to CyberLab — a learning platform for cybersecurity, ethical hacking, Linux, networking and secure development.</p><div class="hero-buttons"><a href="#courses" class="btn primary">Explore Courses</a><a href="profile.html" class="btn secondary">👤 My Profile</a><a href="#dashboard" class="btn secondary">My Dashboard</a></div></div><div class="terminal"><div class="terminal-header"><span>●</span><span>●</span><span>●</span></div><div class="terminal-body"><p>$ whoami</p><p id="liveUserName" class="green">Guest Student</p><p id="liveEmail"></p><p>$ bio</p><p id="liveBio" class="green">Login to show your live profile.</p><p>$ selected_courses</p><div id="liveCourses" class="green"><span>Login to show your courses.</span></div><p>$ status</p><p id="liveStatus" class="green">[ OFFLINE ]</p></div></div></section>
 <section class="features"><div class="feature"><div>📚</div><h3>Learn</h3><p>Structured cybersecurity courses.</p></div><div class="feature"><div>🧪</div><h3>Practice</h3><p>Test your knowledge with quizzes.</p></div><div class="feature"><div>📊</div><h3>Track</h3><p>Monitor your learning progress.</p></div><div class="feature"><div>🏆</div><h3>Achieve</h3><p>Earn certificates and badges as you progress.</p></div></section>
-<section id="courses"><div class="section-title"><p class="section-tag">&gt; COURSES</p><h2>Start Your <span>Learning Journey</span></h2><p>Choose a course and begin building your cybersecurity skills.</p></div><div class="course-grid"><div class="course-card"><div class="course-icon">🛡️</div><h3>Cybersecurity Fundamentals</h3><p>Learn security principles, threats, vulnerabilities and defensive concepts.</p><div class="course-info"><span>Beginner</span><span>8 Lessons</span></div><button onclick="startCourse('Cybersecurity Fundamentals')">Start Course</button></div><div class="course-card"><div class="course-icon">🐧</div><h3>Linux &amp; Termux</h3><p>Learn Linux commands, files, permissions, processes and terminal fundamentals.</p><div class="course-info"><span>Beginner</span><span>10 Lessons</span></div><button onclick="startCourse('Linux & Termux')">Start Course</button></div><div class="course-card"><div class="course-icon">🌐</div><h3>Networking Fundamentals</h3><p>Understand IP addresses, TCP/IP, DNS, HTTP and network architecture.</p><div class="course-info"><span>Beginner</span><span>9 Lessons</span></div><button onclick="startCourse('Networking Fundamentals')">Start Course</button></div><div class="course-card"><div class="course-icon">🔐</div><h3>Ethical Hacking</h3><p>Learn ethical security testing concepts through authorized lab environments.</p><div class="course-info"><span>Intermediate</span><span>12 Lessons</span></div><button onclick="startCourse('Ethical Hacking')">Start Course</button></div><div class="course-card"><div class="course-icon">🔎</div><h3>Wireshark &amp; Traffic Analysis</h3><p>Learn how to inspect and understand network packets in controlled environments.</p><div class="course-info"><span>Intermediate</span><span>7 Lessons</span></div><button onclick="startCourse('Wireshark & Traffic Analysis')">Start Course</button></div><div class="course-card"><div class="course-icon">💻</div><h3>Secure Web Development</h3><p>Learn secure coding concepts, authentication and input validation.</p><div class="course-info"><span>Intermediate</span><span>10 Lessons</span></div><button onclick="startCourse('Secure Web Development')">Start Course</button></div></div></section>
+<section id="courses"><div class="learning-dashboard"><div class="learning-hero"><h2>🎓 CyberLab Learning</h2><p>Learn • Practice • Build • Secure</p></div>
+<div class="course-category"><h3>💻 Programming Languages</h3><div class="dashboard-course-grid">
+<div class="dashboard-course"><div class="course-icon">🌐</div><h4>HTML &amp; CSS</h4><p>Build responsive and secure web pages.</p><button onclick="startCourse('Secure Web Development')">Start →</button></div>
+<div class="dashboard-course"><div class="course-icon">🐍</div><h4>Python</h4><p>Programming foundations for automation and security.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🔵</div><h4>C</h4><p>Learn core programming and system concepts.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">⚙️</div><h4>C++</h4><p>Object-oriented programming and problem solving.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">☕</div><h4>Java</h4><p>Build applications with modern Java concepts.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">📜</div><h4>JavaScript</h4><p>Make interactive web applications.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🗄️</div><h4>SQL</h4><p>Learn databases, queries and data fundamentals.</p><button disabled>Coming Soon</button></div>
+</div></div>
+<div class="course-category"><h3>🛡️ Cybersecurity Courses</h3><div class="dashboard-course-grid">
+<div class="dashboard-course"><div class="course-icon">🛡️</div><h4>Cybersecurity Fundamentals</h4><p>Security principles, threats, vulnerabilities and defense.</p><button onclick="startCourse('Cybersecurity Fundamentals')">Start →</button></div>
+<div class="dashboard-course"><div class="course-icon">🔐</div><h4>Ethical Hacking</h4><p>Authorized security testing concepts and methodology.</p><button onclick="startCourse('Ethical Hacking')">Start →</button></div>
+<div class="dashboard-course"><div class="course-icon">🎯</div><h4>Penetration Testing</h4><p>Learn structured penetration testing workflows.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🌐</div><h4>Web Security</h4><p>Understand common web vulnerabilities and defenses.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🔎</div><h4>Wireshark &amp; Traffic Analysis</h4><p>Inspect and understand network packets.</p><button onclick="startCourse('Wireshark & Traffic Analysis')">Start →</button></div>
+<div class="dashboard-course"><div class="course-icon">🐧</div><h4>Linux &amp; Termux</h4><p>Commands, permissions, processes and terminal skills.</p><button onclick="startCourse('Linux & Termux')">Start →</button></div>
+<div class="dashboard-course"><div class="course-icon">🕵️</div><h4>Digital Forensics</h4><p>Explore evidence collection and analysis concepts.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🔑</div><h4>Cryptography</h4><p>Learn encryption, hashing and security principles.</p><button disabled>Coming Soon</button></div>
+</div></div>
+<div class="course-category"><h3>📊 Data &amp; Technology</h3><div class="dashboard-course-grid">
+<div class="dashboard-course"><div class="course-icon">📈</div><h4>Data Analyst</h4><p>Learn data analysis and visualization fundamentals.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🧠</div><h4>Data Science</h4><p>Explore data science concepts and workflows.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🗃️</div><h4>Database &amp; SQL</h4><p>Understand databases and SQL fundamentals.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🌐</div><h4>Networking</h4><p>IP, TCP/IP, DNS, HTTP and network architecture.</p><button onclick="startCourse('Networking Fundamentals')">Start →</button></div>
+<div class="dashboard-course"><div class="course-icon">☁️</div><h4>Cloud Computing</h4><p>Learn core cloud and infrastructure concepts.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🤖</div><h4>AI Fundamentals</h4><p>Introduction to artificial intelligence concepts.</p><button disabled>Coming Soon</button></div>
+</div></div>
+<div class="course-category"><h3>🧰 Practical Labs</h3><div class="dashboard-course-grid">
+<div class="dashboard-course"><div class="course-icon">🐧</div><h4>Linux Lab</h4><p>Practice Linux commands and terminal skills.</p><button onclick="startCourse('Linux & Termux')">Open Lab →</button></div>
+<div class="dashboard-course"><div class="course-icon">🔎</div><h4>Wireshark Lab</h4><p>Practice packet inspection in controlled environments.</p><button onclick="startCourse('Wireshark & Traffic Analysis')">Open Lab →</button></div>
+<div class="dashboard-course"><div class="course-icon">🛰️</div><h4>Nmap Lab</h4><p>Practice network discovery in authorized labs.</p><button disabled>Coming Soon</button></div>
+<div class="dashboard-course"><div class="course-icon">🏁</div><h4>CTF Practice</h4><p>Challenge yourself with cybersecurity exercises.</p><button disabled>Coming Soon</button></div>
+</div></div>
+<div class="course-category"><h3>🏆 My Learning</h3><div class="learning-progress"><strong>Continue Learning</strong><p id="courseDashboardStatus">Login to see your learning progress.</p><div class="learning-progress-bar"><div id="courseDashboardProgress" class="learning-progress-fill"></div></div><p><a href="profile.html">Profile</a> • <a href="badges.html">Badges</a> • <a href="verify.html">Certificates</a></p></div></div>
+</div></section>
 <section id="about"><div class="section-title"><p class="section-tag">&gt; ABOUT CYBERLAB</p><h2>Learn. <span>Build. Secure.</span></h2></div><div class="about-content"><div><p>CyberLab is an educational cybersecurity platform created to help students understand security concepts through structured learning and practice.</p><p>The platform focuses on practical learning while encouraging responsible and authorized security testing.</p></div><div class="about-box"><h3>Our Mission</h3><p>Make cybersecurity education accessible, practical and engaging for beginners.</p></div></div></section>
 <section id="dashboard"><div class="section-title"><p class="section-tag">&gt; STUDENT DASHBOARD</p><h2>Your Learning <span>Progress</span></h2><p><a href="profile.html">Open your full student profile →</a></p></div><div class="dashboard"><div class="profile"><div class="avatar">GS</div><h3>Guest Student</h3><p>Login to track your progress</p><a class="btn secondary" href="profile.html">View Profile</a></div><div class="progress-area"><h3>Overall Progress</h3><div class="progress-bar"><div id="progress"></div></div><p><span id="progressText">0%</span> course completion</p></div><div class="dashboard-stats"><div><strong id="coursesCompleted">0</strong><span>Courses</span></div><div><strong id="quizScore">0%</strong><span>Quiz Score</span></div><div><strong id="certificates">0</strong><span>Certificates</span></div></div></div></section>
 <section id="quiz"><div class="section-title"><p class="section-tag">&gt; KNOWLEDGE CHECK</p><h2>Cybersecurity <span>Quiz</span></h2></div><div class="quiz-box"><h3 id="question">What does CIA stand for in cybersecurity?</h3><div class="answers"><button onclick="checkAnswer(this, false)">Central Intelligence Agency</button><button onclick="checkAnswer(this, true)">Confidentiality, Integrity and Availability</button><button onclick="checkAnswer(this, false)">Computer Internet Access</button><button onclick="checkAnswer(this, false)">Cyber Information Architecture</button></div><p id="quizResult"></p></div></section>
@@ -33,5 +89,17 @@
 <script src="stage7.js?v=1"></script>
 <script src="admin-link.js?v=1"></script>
 <script src="stage11-live-status.js?v=1"></script>
+<script>
+(function(){
+  const old=document.getElementById('progress');
+  const fill=document.getElementById('courseDashboardProgress');
+  const text=document.getElementById('courseDashboardStatus');
+  function sync(){
+    if(old&&fill){fill.style.width=(old.style.width||'0%');}
+    if(text&&old){text.textContent='Your overall course progress is '+(old.style.width||'0%')+'.';}
+  }
+  setTimeout(sync,1200); setInterval(sync,2000);
+})();
+</script>
 </body>
 </html>
