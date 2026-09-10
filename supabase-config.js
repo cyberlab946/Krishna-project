@@ -9,3 +9,13 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable__1XTVgh6xSlkhgN9fPfX4Q_BrteZa-E
 const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY)
     ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
     : null;
+
+// Load the Supabase-backed expansion course player after the existing course system.
+window.addEventListener('load', function () {
+    if (document.getElementById('stage12CourseScript')) return;
+    const s = document.createElement('script');
+    s.id = 'stage12CourseScript';
+    s.src = 'stage12-supabase-courses.js?v=1';
+    s.async = false;
+    document.head.appendChild(s);
+});
