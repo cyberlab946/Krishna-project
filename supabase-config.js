@@ -12,24 +12,23 @@ const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_
 // Load the expansion course system reliably before/after DOM ready.
 // Version bump prevents Chrome from using an older cached copy.
 (function loadStage12() {
-    function addStage12() {
-        if (document.getElementById('stage12CourseScript')) return;
+    function addScript(id, src, onload) {
+        if (document.getElementById(id)) return;
         const s = document.createElement('script');
-        s.id = 'stage12CourseScript';
-        s.src = 'stage12-supabase-courses.js?v=2';
+        s.id = id;
+        s.src = src;
         s.async = false;
-        s.onload = function () {
-            // Give the course cards one more chance after the script is ready.
-            setTimeout(function () {
-                if (typeof window.stage12ActivateCourses === 'function') {
-                    window.stage12ActivateCourses();
-                }
-            }, 100);
-        };
-        s.onerror = function () {
-            console.error('CyberLab: could not load the expansion course system.');
-        };
+        if (onload) s.onload = onload;
+        s.onerror = function () { console.error('CyberLab: failed to load ' + src); };
         document.head.appendChild(s);
+    }
+
+    function addStage12() {
+        addScript('stage12CourseScript', 'stage12-supabase-courses.js?v=2', function () {
+            setTimeout(function () {
+                addScript('courseButtonFixScript', 'course-button-fix.js?v=1');
+            }, 100);
+        });
     }
 
     if (document.readyState === 'loading') {
