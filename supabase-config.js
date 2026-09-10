@@ -10,7 +10,15 @@ const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_
         s.id = 'stage13CourseLauncher';
         s.src = 'stage13-course-launch-fix.js?v=1';
         s.async = false;
-        s.onerror = function () { console.error('CyberLab: failed to load unified course launcher.'); };
+        s.onload = function(){
+            if (document.getElementById('stage14ProfessionalUI')) return;
+            const ui = document.createElement('script');
+            ui.id = 'stage14ProfessionalUI';
+            ui.src = 'stage14-professional-ui.js?v=1';
+            ui.async = false;
+            document.head.appendChild(ui);
+        };
+        s.onerror = function () { console.error('CyberLab: failed to load course launcher.'); };
         document.head.appendChild(s);
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load, { once: true });
