@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="description" content="CyberLab student profile"><title>CyberLab | Student Profile</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="profile-v2.css">
+</head>
+<body class="profile-page">
+<header><div class="logo">&lt;Cyber<span>Lab</span>/&gt;</div><div><a class="back-link" href="index.html">← CyberLab</a> <button id="logoutBtn" class="login-btn" type="button">Logout</button></div></header>
+<main class="profile-shell">
+<div class="profile-header"><div><p class="section-tag">&gt; STUDENT PROFILE</p><h1>Your <span>Profile</span></h1></div></div>
+<div class="profile-grid">
+<section class="profile-card"><div id="avatar" class="avatar-big">🧑‍💻</div><h2 id="profileName">CyberLab Student</h2><p id="profileEmail" class="profile-email"></p><p id="bio" class="bio">No bio added yet.</p><small id="joined"></small>
+<form id="profileForm" class="edit-form"><h3>Edit Profile</h3><label for="nameInput">Full Name</label><input id="nameInput" maxlength="80" required><label for="avatarInput">Avatar Emoji</label><input id="avatarInput" maxlength="8" placeholder="🧑‍💻"><label for="bioInput">Bio</label><textarea id="bioInput" maxlength="300" placeholder="Tell other CyberLab students about your learning goals..."></textarea><p id="message" class="message"></p><button class="save-btn" type="submit">Save Profile</button></form></section>
+<div class="profile-right">
+<section class="stats-card"><h3>Learning Overview</h3><div class="stats-grid"><div class="stat-box"><strong id="enrollmentCount">0</strong><span>Enrollments</span></div><div class="stat-box"><strong id="quizCount">0</strong><span>Quiz Attempts</span></div><div class="stat-box"><strong id="certificateCount">0</strong><span>Certificates</span></div></div></section>
+<section class="history-card"><h3>📚 Courses</h3><div id="courseHistory"></div></section>
+<section class="history-card"><h3>📝 Quiz History</h3><div id="quizHistory"></div></section>
+<section class="history-card"><h3>🎓 Certificates</h3><div id="certificateHistory"></div></section>
+</div></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="profile-v2.js?v=1"></script>
+</body></html>
