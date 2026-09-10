@@ -10,19 +10,15 @@ alter table public.certificates
 -- stable record even if the student's profile or course display changes later.
 update public.certificates c
 set
-  student_name = coalesce(c.student_name, p.full_name, 'CyberLab Student'),
-  course_name = coalesce(c.course_name, co.name),
-  quiz_score = coalesce(c.quiz_score, q.score)
-from public.courses co
-left join public.profiles p on p.id = c.user_id
-left join lateral (
-  select qa.score
-  from public.quiz_attempts qa
-  where qa.user_id = c.user_id and qa.course_id = c.course_id
-  order by qa.attempted_at desc
-  limit 1
-) q on true
-where c.course_id = co.id;
+  student_name = coalesce(c.student_name, (select p.full_name from public.profiles p where p.id = c.user_id), 'CyberLab Student'),
+  course_name = coalesce(c.course_name, (select co.name from public.courses co where co.id = c.course_id)),
+  quiz_score = coalesce(c.quiz_score, (
+    select qa.score
+    from public.quiz_attempts qa
+    where qa.user_id = c.user_id and qa.course_id = c.course_id
+    order by qa.attempted_at desc
+    limit 1
+  ));
 
 -- Public verification reads only certificate fields needed for verification.
 -- It does not expose user_id, email, passwords, or private profile data.
