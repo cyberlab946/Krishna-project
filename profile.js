@@ -136,3 +136,13 @@ window.addEventListener('keydown', function(event) {
         }
     }
 });
+
+// Stage 7 is loaded after the existing course player so its certificate
+// generator can add online verification and a QR code without replacing the
+// working Stage 1-6 authentication/course code.
+window.addEventListener('load', function () {
+    if (document.querySelector('script[src*="stage7.js"]')) return;
+    var s = document.createElement('script');
+    s.src = 'stage7.js?v=1';
+    document.body.appendChild(s);
+});
