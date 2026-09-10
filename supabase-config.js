@@ -16,6 +16,14 @@ const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_
             ui.id = 'stage14ProfessionalUI';
             ui.src = 'stage14-professional-ui.js?v=1';
             ui.async = false;
+            ui.onload = function(){
+                if (document.getElementById('stage15DashboardUpgrade')) return;
+                const dash = document.createElement('script');
+                dash.id = 'stage15DashboardUpgrade';
+                dash.src = 'stage15-dashboard-upgrade.js?v=1';
+                dash.async = false;
+                document.head.appendChild(dash);
+            };
             document.head.appendChild(ui);
         };
         s.onerror = function () { console.error('CyberLab: failed to load course launcher.'); };
