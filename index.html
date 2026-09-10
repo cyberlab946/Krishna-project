@@ -7,11 +7,12 @@
     <title>CyberLab | Learn • Build • Secure</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="stage2.css?v=3">
+    <link rel="stylesheet" href="mobile-menu-fix.css?v=1">
 </head>
 <body>
 <header>
     <div class="logo">&lt;Cyber<span>Lab</span>/&gt;</div>
-    <button class="menu-btn" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false">☰</button>
+    <button class="menu-btn" type="button" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false">☰</button>
     <nav id="mainNav"><a href="#home">Home</a><a href="#courses">Courses</a><a href="#about">About</a><a href="#dashboard">Dashboard</a><a href="#quiz">Quiz</a><a href="#contact">Contact</a><a href="profile.html">Profile</a><a href="badges.html">Badges</a><a href="verify.html">Verify Certificate</a><a href="admin.html" id="adminLink" hidden>Admin</a></nav>
     <button class="login-btn" onclick="openLogin()">Login</button>
 </header>
@@ -26,7 +27,7 @@
 <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle"><div class="modal-box"><button class="close" onclick="closeLogin()" aria-label="Close login">×</button><h2 id="loginTitle">Cyber<span>Lab</span> Login</h2><input id="loginEmail" type="email" placeholder="Email" autocomplete="email"><input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password"><button onclick="login()">Login</button><p><a href="#" onclick="showForgotPassword(); return false;">Forgot password?</a></p><p>New student? <a href="#" onclick="showRegister(); return false;">Create Account</a></p></div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-<script src="script.js?v=6"></script>
+<script src="script.js?v=7"></script>
 <script src="profile.js?v=1"></script>
 <script src="stage2.js?v=3"></script>
 <script src="stage7.js?v=1"></script>
