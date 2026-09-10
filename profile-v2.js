@@ -2,6 +2,7 @@ const profileState={user:null,profile:null,enrollments:[],quizzes:[],certificate
 const P=id=>document.getElementById(id);
 function safe(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML;}
 function fmt(date){return date?new Date(date).toLocaleDateString():'';}
+function showMessage(text,type='info'){const el=P('message');el.textContent=text;el.className='message '+type;}
 async function loadProfile(){
  if(!window.supabase||!supabaseClient){return fail('Supabase is not configured.');}
  const {data:{session}}=await supabaseClient.auth.getSession();
@@ -18,7 +19,7 @@ async function loadProfile(){
   supabaseClient.from('user_badges').select('badge_id,awarded_at').eq('user_id',session.user.id)
  ]);
  const err=[p,e,q,c,courses,badges,earned].find(x=>x.error)?.error;if(err)return fail(err.message);
- profileState.profile=p.data||{full_name:session.user.user_metadata?.full_name||'CyberLab Student',bio:'CyberLab student',avatar_emoji:'🧑‍💻'};
+ profileState.profile=p.data||{full_name:session.user.user_metadata?.full_name||'CyberLab Student',bio:'',avatar_emoji:'🧑‍💻'};
  profileState.enrollments=e.data||[];profileState.quizzes=q.data||[];profileState.certificates=c.data||[];profileState.courses=courses.data||[];profileState.badges=badges.data||[];profileState.earnedBadges=earned.data||[];
  renderProfile();
 }
@@ -34,9 +35,14 @@ function renderProfile(){
  P('quizHistory').innerHTML=profileState.quizzes.length?profileState.quizzes.slice(0,10).map(q=>'<div class="history-item"><strong>'+safe(courseName(q.course_id))+' — '+q.score+'%</strong><small>Attempted '+fmt(q.attempted_at)+'</small></div>').join(''):'<p class="empty">No quiz attempts yet.</p>';
  P('certificateHistory').innerHTML=profileState.certificates.length?profileState.certificates.map(c=>'<div class="history-item"><strong>'+safe(c.course_name||courseName(c.course_id))+'</strong><small>'+safe(c.certificate_id)+' · '+c.quiz_score+'% · Issued '+fmt(c.issued_at)+'</small></div>').join(''):'<p class="empty">No certificates yet.</p>';
 }
-P('profileForm').onsubmit=async e=>{e.preventDefault();const name=P('nameInput').value.trim(),bio=P('bioInput').value.trim(),avatar=P('avatarInput').value.trim();if(name.length<2)return P('message').textContent='Name must contain at least 2 characters.';if(bio.length>300)return P('message').textContent='Bio must be 300 characters or less.';P('message').textContent='Saving...';
- const auth=await supabaseClient.auth.updateUser({data:{full_name:name}});if(auth.error)return P('message').textContent=auth.error.message;
- const result=await supabaseClient.from('profiles').upsert({id:profileState.user.id,full_name:name,bio,avatar_emoji:avatar||'🧑‍💻',updated_at:new Date().toISOString()},{onConflict:'id'});if(result.error)return P('message').textContent=result.error.message;P('message').textContent='Profile saved successfully.';await loadProfile();};
+P('profileForm').onsubmit=async e=>{e.preventDefault();const name=P('nameInput').value.trim(),bio=P('bioInput').value.trim(),avatar=P('avatarInput').value.trim();if(name.length<2)return showMessage('Name must contain at least 2 characters.','error');if(bio.length>300)return showMessage('Bio must be 300 characters or less.','error');if(!profileState.user)return showMessage('Please log in again.','error');showMessage('Saving profile...','info');
+ try{
+  const auth=await supabaseClient.auth.updateUser({data:{full_name:name}});if(auth.error)throw auth.error;
+  const result=await supabaseClient.from('profiles').upsert({id:profileState.user.id,full_name:name,bio,avatar_emoji:avatar||'🧑‍💻',updated_at:new Date().toISOString()},{onConflict:'id'});if(result.error)throw result.error;
+  profileState.profile={...(profileState.profile||{}),id:profileState.user.id,full_name:name,bio,avatar_emoji:avatar||'🧑‍💻'};
+  renderProfile();showMessage('✓ Profile and bio saved successfully.','success');
+ }catch(err){showMessage('Unable to save profile: '+(err.message||'Please try again.'),'error');}
+};
 P('logoutBtn').onclick=async()=>{await supabaseClient.auth.signOut();location.href='index.html';};
 function fail(text){document.body.innerHTML='<main class="profile-shell"><div class="profile-card"><h1>Profile</h1><p>'+safe(text)+'</p><a class="back-link" href="index.html">← Back to CyberLab</a></div></main>';}
 loadProfile();
