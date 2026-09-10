@@ -1,6 +1,6 @@
 -- CyberLab V2 Stage 1: secure admin role and dashboard access
 -- Run this entire file in Supabase SQL Editor.
--- IMPORTANT: replace the email below with the account that should be the CyberLab administrator.
+-- This version checks auth.users directly so admin access does not depend on a stale JWT.
 
 -- 1) Give the chosen account an admin role in app_metadata.
 -- app_metadata is not writable by normal browser clients.
@@ -8,15 +8,21 @@ update auth.users
 set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || jsonb_build_object('role', 'admin')
 where lower(email) = lower('cyberlabkrishna@gmail.com');
 
--- 2) Helper used by RLS policies. SECURITY DEFINER avoids recursive profile checks.
+-- 2) Helper used by RLS policies.
+-- SECURITY DEFINER lets the helper read auth.users safely without exposing auth.users to the browser.
 create or replace function public.is_cyberlab_admin()
 returns boolean
 language sql
 stable
 security definer
-set search_path = public
+set search_path = public, auth
 as $$
-  select coalesce((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin', false);
+  select coalesce(
+    (select (raw_app_meta_data ->> 'role') = 'admin'
+     from auth.users
+     where id = auth.uid()),
+    false
+  );
 $$;
 
 revoke all on function public.is_cyberlab_admin() from public;
