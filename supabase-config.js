@@ -4,30 +4,19 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable__1XTVgh6xSlkhgN9fPfX4Q_BrteZa-E
 const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) : null;
 
 (function loadCourseFix() {
-    function load() {
-        if (document.getElementById('stage13CourseLauncher')) return;
-        const s = document.createElement('script');
-        s.id = 'stage13CourseLauncher';
-        s.src = 'stage13-course-launch-fix.js?v=1';
-        s.async = false;
-        s.onload = function(){
-            if (document.getElementById('stage14ProfessionalUI')) return;
-            const ui = document.createElement('script');
-            ui.id = 'stage14ProfessionalUI';
-            ui.src = 'stage14-professional-ui.js?v=1';
-            ui.async = false;
-            ui.onload = function(){
-                if (document.getElementById('stage15DashboardUpgrade')) return;
-                const dash = document.createElement('script');
-                dash.id = 'stage15DashboardUpgrade';
-                dash.src = 'stage15-dashboard-upgrade.js?v=1';
-                dash.async = false;
-                document.head.appendChild(dash);
-            };
-            document.head.appendChild(ui);
-        };
-        s.onerror = function () { console.error('CyberLab: failed to load course launcher.'); };
+    function addScript(id, src, next) {
+        if (document.getElementById(id)) { if (next) next(); return; }
+        const s = document.createElement('script'); s.id = id; s.src = src; s.async = false;
+        s.onload = function(){ if(next) next(); };
+        s.onerror = function () { console.error('CyberLab: failed to load ' + src); };
         document.head.appendChild(s);
+    }
+    function load() {
+        addScript('stage13CourseLauncher', 'stage13-course-launch-fix.js?v=2', function(){
+            addScript('stage14ProfessionalUI', 'stage14-professional-ui.js?v=2', function(){
+                addScript('stage16CertificateQR', 'stage16-certificate-qr-fix.js?v=1');
+            });
+        });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load, { once: true });
     else load();
