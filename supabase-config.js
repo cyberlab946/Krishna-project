@@ -14,7 +14,9 @@ const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_PUBLISHABLE_
     function load() {
         addScript('stage13CourseLauncher', 'stage13-course-launch-fix.js?v=2', function(){
             addScript('stage14ProfessionalUI', 'stage14-professional-ui.js?v=2', function(){
-                addScript('stage16CertificateQR', 'stage16-certificate-qr-fix.js?v=1');
+                addScript('stage16CertificateQR', 'stage16-certificate-qr-fix.js?v=1', function(){
+                    addScript('stage17CertificateDownload', 'stage17-certificate-download.js?v=1');
+                });
             });
         });
     }
